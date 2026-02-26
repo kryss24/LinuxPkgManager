@@ -1,0 +1,151 @@
+/* UI Styles */
+
+QWidget#mainWindow {
+    background-color: #0D0F14;
+    color: #E2E8F8;
+    font-family: "Sora", "Cantarell", "Segoe UI", sans-serif;
+}
+
+/* Header */
+QWidget#topBar {
+    background-color: #0D0F14;
+    border-bottom: 1px solid #2A2F42;
+    max-height: 80px;
+    min-height: 80px;
+}
+
+QLabel#appTitle {
+    color: #4F9EFF;
+    font-size: 20px;
+    font-weight: bold;
+    padding-left: 20px;
+}
+
+QLineEdit#searchBar {
+    background-color: #161922;
+    color: #E2E8F8;
+    border: 1px solid #2A2F42;
+    border-radius: 8px;
+    padding: 8px 15px;
+    font-size: 14px;
+    margin-right: 20px;
+    min-width: 250px;
+}
+
+QLineEdit#searchBar:focus {
+    border-color: #4F9EFF;
+}
+
+/* Tabs */
+QTabBar::tab {
+    background-color: transparent;
+    color: #5A6380;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+QTabBar::tab:selected {
+    color: #4F9EFF;
+    border-bottom: 2px solid #4F9EFF;
+}
+
+QTabBar::tab:hover {
+    color: #E2E8F8;
+}
+
+/* Package Card */
+QWidget#packageCard {
+    background-color: #161922;
+    border: 1px solid #2A2F42;
+    border-radius: 12px;
+    margin: 5px;
+}
+
+QWidget#packageCard:hover {
+    background-color: #1F2433;
+    border-color: #4F9EFF;
+    /* Transformation handled via QPropertyAnimation in Python */
+}
+
+QLabel#pkgName {
+    color: #E2E8F8;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QLabel#pkgVersion {
+    color: #5A6380;
+    font-size: 12px;
+    font-family: "JetBrains Mono";
+}
+
+QLabel#pkgDesc {
+    color: #E2E8F8;
+    font-size: 13px;
+}
+
+QLabel#pkgMeta {
+    color: #5A6380;
+    font-size: 11px;
+}
+
+QPushButton#uninstallBtn {
+    background-color: #FF6B6B;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 6px 15px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+QPushButton#uninstallBtn:hover {
+    background-color: #FF5C5C;
+}
+
+QPushButton#uninstallBtn:pressed {
+    padding-top: 8px;
+    padding-bottom: 4px;
+}
+
+/* ScrollArea */
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 6px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #4F9EFF;
+    min-height: 20px;
+    border-radius: 3px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+}
+
+/* Toasts */
+QWidget#toastSuccess {
+    background-color: #3DD68C;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+QWidget#toastError {
+    background-color: #FF5C5C;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+QLabel#toastMessage {
+    color: white;
+    font-weight: bold;
+}
