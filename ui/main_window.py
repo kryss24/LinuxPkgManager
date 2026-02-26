@@ -1,3 +1,5 @@
+import sys
+import os
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
     QLineEdit, QTabWidget, QScrollArea, QGridLayout, 
@@ -9,7 +11,14 @@ from PyQt6.QtGui import QIcon, QFontDatabase, QColor
 from ui.package_card import PackageCard, SkeletonCard
 from core.apt_backend import PackageWorker, UninstallWorker
 from core.snap_backend import SnapWorker
-import os
+
+
+def get_base_path():
+    if getattr(sys, 'frozen', False):
+        return sys._MEIPASS  # PyInstaller
+    # Mode dev : remonter d'un niveau depuis ui/ vers la racine
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 class Toast(QFrame):
     def __init__(self, message, is_error=False, parent=None):
@@ -39,6 +48,7 @@ class Toast(QFrame):
         self.anim.finished.connect(self.deleteLater)
         self.anim.start()
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -61,10 +71,13 @@ class MainWindow(QMainWindow):
         self.load_packages()
 
     def load_styles(self):
-        qss_path = os.path.join(os.path.dirname(__file__), "styles.qss")
+        base = get_base_path()
+        qss_path = os.path.join(base, "ui", "styles.qss")
         if os.path.exists(qss_path):
             with open(qss_path, "r") as f:
                 self.setStyleSheet(f.read())
+        else:
+            print(f"[WARN] styles.qss not found at: {qss_path}")
 
     def init_ui(self):
         central_widget = QWidget()
@@ -119,7 +132,6 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.scroll)
 
     def load_packages(self):
-        # Show skeletons
         self.clear_grid()
         for i in range(8):
             skel = SkeletonCard()
@@ -155,9 +167,8 @@ class MainWindow(QMainWindow):
         self.filter_packages()
 
     def filter_packages(self):
-        if not hasattr(self, 'grid_layout'):  # ← ajoute cette ligne
+        if not hasattr(self, 'grid_layout'):
             return
-    
         self.clear_grid()
         
         filtered = []
@@ -172,14 +183,13 @@ class MainWindow(QMainWindow):
             self.show_empty_state()
             return
             
-        # Add to grid (2 columns min)
         cols = max(2, self.width() // 350)
         for i, pkg in enumerate(filtered):
             card = PackageCard(pkg, self.confirm_uninstall)
             self.grid_layout.addWidget(card, i // cols, i % cols)
 
     def clear_grid(self):
-        if not hasattr(self, 'grid_layout'):  # ← ajoute cette ligne
+        if not hasattr(self, 'grid_layout'):
             return
         while self.grid_layout.count():
             item = self.grid_layout.takeAt(0)
@@ -194,7 +204,6 @@ class MainWindow(QMainWindow):
 
     def confirm_uninstall(self, pkg):
         msg = f"Are you sure you want to uninstall {pkg['name']}?"
-        # Simple confirmation dialog
         diag = QDialog(self)
         diag.setWindowTitle("Confirm Uninstall")
         diag.setFixedSize(350, 150)
@@ -223,7 +232,6 @@ class MainWindow(QMainWindow):
         worker = UninstallWorker(pkg["name"], pkg["type"])
         worker.finished.connect(lambda s, m: self.on_uninstall_finished(s, m, pkg))
         worker.start()
-        # Keep reference to prevent GC
         self._active_uninstall = worker
 
     def on_uninstall_finished(self, success, message, pkg):
