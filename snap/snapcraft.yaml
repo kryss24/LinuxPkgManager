@@ -34,7 +34,8 @@ parts:
       - libxrender1
     override-build: |
       craftctl default
-      # Installer PyQt6 dans le snap
+      # Bootstrap pip
+      python3 -m ensurepip --upgrade
       python3 -m pip install --target $CRAFT_PART_INSTALL/lib/python3 PyQt6
       # Script de lancement
       mkdir -p $CRAFT_PART_INSTALL/bin
