@@ -20,10 +20,11 @@ parts:
   linuxpkgmanager:
     plugin: dump
     source: .
-    stage-packages:
-      - python3
+    build-packages:
       - python3-pip
       - python3-venv
+    stage-packages:
+      - python3
       - libgl1
       - libglib2.0-0
       - libdbus-1-3
@@ -34,10 +35,7 @@ parts:
       - libxrender1
     override-build: |
       craftctl default
-      # Bootstrap pip
-      python3 -m ensurepip --upgrade
-      python3 -m pip install --target $CRAFT_PART_INSTALL/lib/python3 PyQt6
-      # Script de lancement
+      pip3 install --target $CRAFT_PART_INSTALL/lib/python3 PyQt6
       mkdir -p $CRAFT_PART_INSTALL/bin
       cat > $CRAFT_PART_INSTALL/bin/run.sh << 'EOF'
       #!/bin/bash
@@ -45,7 +43,6 @@ parts:
       exec python3 $SNAP/main.py "$@"
       EOF
       chmod +x $CRAFT_PART_INSTALL/bin/run.sh
-      # Desktop et icône
       mkdir -p $CRAFT_PART_INSTALL/usr/share/applications
       mkdir -p $CRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps
       cp $CRAFT_PROJECT_DIR/snap/local/linuxpkgmanager.desktop \
