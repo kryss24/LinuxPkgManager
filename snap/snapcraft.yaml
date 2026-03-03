@@ -26,16 +26,18 @@ apps:
 
 parts:
   linuxpkgmanager:
-    plugin: python
-    source: .
-    python-requirements:
-      - requirements.txt
+    python-packages:
+      - PyQt6
     stage-packages:
-      - python3-pyqt6
-      - libqt6core6
-      - libqt6gui6
-      - libqt6widgets6
+      - python3-pip
+      - libgl1
+      - libglib2.0-0
+      - libdbus-1-3
       - libxcb-cursor0
+      - libxcb1
+      - libx11-6
+      - libxext6
+      - libxrender1
     override-build: |
       craftctl default
       mkdir -p $CRAFT_PART_INSTALL/usr/share/applications
