@@ -1,0 +1,46 @@
+name: linuxpkgmanager
+version: '1.0.0'
+summary: Modern GUI to manage manually installed APT & Snap packages
+description: |
+  LinuxPkgManager is a desktop application that displays only the packages
+  you manually installed — filtering out system packages, libraries and
+  Ubuntu base components. Supports APT and Snap with a dark professional UI.
+
+grade: stable
+confinement: classic
+base: core22
+
+architectures:
+  - build-on: amd64
+
+apps:
+  linuxpkgmanager:
+    command: pkgmanager
+    desktop: usr/share/applications/linuxpkgmanager.desktop
+    plugs:
+      - home
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+
+parts:
+  linuxpkgmanager:
+    plugin: dump
+    source: dist/pkgmanager/   # Copie directement le build PyInstaller
+    organize:
+      "*": ./
+    override-build: |
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/applications
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps
+      cp $CRAFT_PROJECT_DIR/snap/local/linuxpkgmanager.desktop \
+         $CRAFT_PART_INSTALL/usr/share/applications/
+      cp $CRAFT_PROJECT_DIR/assets/icon.png \
+         $CRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps/linuxpkgmanager.png
+
+layout:
+  /usr/share/icons:
+    bind: $SNAP/usr/share/icons
+  /usr/share/applications:
+    bind: $SNAP/usr/share/applications

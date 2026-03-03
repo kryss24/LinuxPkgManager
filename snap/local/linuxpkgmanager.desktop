@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Linux Package Manager
+Comment=Manage manually installed APT and Snap packages
+Exec=linuxpkgmanager
+Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/linuxpkgmanager.png
+Type=Application
+Categories=System;PackageManager;
+Terminal=false
