@@ -26,6 +26,8 @@ apps:
 
 parts:
   linuxpkgmanager:
+    plugin: python
+    source: .
     python-packages:
       - PyQt6
     stage-packages:
