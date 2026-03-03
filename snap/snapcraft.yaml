@@ -26,10 +26,16 @@ apps:
 
 parts:
   linuxpkgmanager:
-    plugin: dump
-    source: dist/pkgmanager/   # Copie directement le build PyInstaller
-    organize:
-      "*": ./
+    plugin: python
+    source: .
+    python-requirements:
+      - requirements.txt
+    stage-packages:
+      - python3-pyqt6
+      - libqt6core6
+      - libqt6gui6
+      - libqt6widgets6
+      - libxcb-cursor0
     override-build: |
       craftctl default
       mkdir -p $CRAFT_PART_INSTALL/usr/share/applications
