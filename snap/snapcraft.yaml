@@ -4,7 +4,7 @@ summary: Modern GUI to manage manually installed APT & Snap packages
 description: |
   LinuxPkgManager is a desktop application that displays only the packages
   you manually installed — filtering out system packages, libraries and
-  Ubuntu base components. Supports APT and Snap with a dark professional UI.
+  Ubuntu base components. Supports APT and Snap  with a dark professional UI.
 grade: stable
 confinement: classic
 base: core22
