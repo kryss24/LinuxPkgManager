@@ -1,23 +1,138 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
-    QFrame, QGraphicsDropShadowEffect
+    QFrame, QGraphicsDropShadowEffect, QGraphicsOpacityEffect
 )
-from PyQt6.QtCore import Qt, QPropertyAnimation, QPoint, pyqtProperty, QSize, QTimer
-from PyQt6.QtGui import QPixmap, QColor, QPainter, QLinearGradient, QBrush, QIcon
+from PyQt6.QtCore import Qt, QPropertyAnimation, QPoint, pyqtProperty, QSize, QTimer, QRect, QEasingCurve
+from PyQt6.QtGui import QPixmap, QColor, QPainter, QLinearGradient, QBrush, QIcon, QFont, QPalette
 import os
+
+class PackageCard(QFrame):
+    def __init__(self, pkg, uninstall_callback, parent=None):
+        super().__init__(parent)
+        self.pkg = pkg
+        self.uninstall_callback = uninstall_callback
+        self.setObjectName("packageCard")
+        self.setFixedHeight(100) # List item height
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(16, 12, 16, 12)
+        layout.setSpacing(16)
+        
+        # 1. Icon (64x64)
+        self.icon_label = QLabel()
+        self.icon_label.setFixedSize(64, 64)
+        self.update_icon()
+        layout.addWidget(self.icon_label)
+        
+        # 2. Package Info
+        info_layout = QVBoxLayout()
+        info_layout.setSpacing(4)
+        
+        # Name and Badge
+        name_row = QHBoxLayout()
+        name_row.setSpacing(8)
+        
+        self.name_label = QLabel(self.pkg["name"])
+        self.name_label.setObjectName("pkgName")
+        name_row.addWidget(self.name_label)
+        
+        badge_color = "#6366f1" if self.pkg["type"] == "APT" else "#ec4899"
+        self.badge = QLabel(self.pkg["type"].upper())
+        self.badge.setObjectName("pkgBadge")
+        self.badge.setStyleSheet(f"background-color: {badge_color}; color: white; border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: bold;")
+        name_row.addWidget(self.badge)
+        name_row.addStretch()
+        
+        info_layout.addLayout(name_row)
+        
+        # Version and Meta
+        meta_row = QHBoxLayout()
+        meta_row.setSpacing(12)
+        
+        self.version_label = QLabel(f"Version: {self.pkg['version']}")
+        self.version_label.setObjectName("pkgMeta")
+        meta_row.addWidget(self.version_label)
+        
+        self.date_label = QLabel(f"•  {self.pkg['install_date']}")
+        self.date_label.setObjectName("pkgMeta")
+        meta_row.addWidget(self.date_label)
+        
+        meta_row.addStretch()
+        info_layout.addLayout(meta_row)
+        
+        # Description (2 lines)
+        desc_text = self.pkg["description"].split('\n')[0]
+        if len(desc_text) > 120: desc_text = desc_text[:117] + "..."
+        self.desc_label = QLabel(desc_text)
+        self.desc_label.setObjectName("pkgDesc")
+        self.desc_label.setWordWrap(True)
+        info_layout.addWidget(self.desc_label)
+        
+        layout.addLayout(info_layout, stretch=1)
+        
+        # 3. Actions (Hidden by default, shown on hover)
+        self.action_area = QWidget()
+        self.action_area.setFixedWidth(120)
+        action_layout = QHBoxLayout(self.action_area)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+        action_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        self.uninstall_btn = QPushButton("Uninstall")
+        self.uninstall_btn.setObjectName("cardUninstallBtn")
+        self.uninstall_btn.setFixedSize(100, 32)
+        self.uninstall_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.uninstall_btn.clicked.connect(lambda: self.uninstall_callback(self.pkg))
+        action_layout.addWidget(self.uninstall_btn)
+        
+        layout.addWidget(self.action_area)
+        self.action_area.hide()
+
+    def update_icon(self):
+        if self.pkg.get("icon") and os.path.exists(self.pkg["icon"]):
+            pixmap = QPixmap(self.pkg["icon"]).scaled(64, 64, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            self.icon_label.setPixmap(pixmap)
+        else:
+            avatar = QPixmap(64, 64)
+            avatar.fill(Qt.GlobalColor.transparent)
+            painter = QPainter(avatar)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+            
+            # Use hash of name for deterministic color
+            color_idx = hash(self.pkg["name"]) % 360
+            color = QColor.fromHsv(color_idx, 160, 180)
+            
+            painter.setBrush(color)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawRoundedRect(0, 0, 64, 64, 16, 16)
+            
+            painter.setPen(Qt.GlobalColor.white)
+            font = QFont("Inter", 24, QFont.Weight.Bold)
+            painter.setFont(font)
+            painter.drawText(avatar.rect(), Qt.AlignmentFlag.AlignCenter, self.pkg["name"][0].upper())
+            painter.end()
+            self.icon_label.setPixmap(avatar)
+
+    def enterEvent(self, event):
+        self.setProperty("hover", True)
+        self.style().polish(self)
+        self.action_area.show()
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        self.setProperty("hover", False)
+        self.style().polish(self)
+        self.action_area.hide()
+        super().leaveEvent(event)
 
 class SkeletonCard(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("skeletonCard")
-        self.setFixedSize(300, 160)
-        self.setStyleSheet("""
-            QFrame#skeletonCard {
-                background-color: #161922;
-                border: 1px solid #2A2F42;
-                border-radius: 12px;
-            }
-        """)
+        self.setFixedHeight(100)
         
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
@@ -30,150 +145,26 @@ class SkeletonCard(QFrame):
         
         # Gradient shimmer
         gradient = QLinearGradient(self.offset - 100, 0, self.offset + 100, 0)
-        gradient.setColorAt(0, QColor("#161922"))
-        gradient.setColorAt(0.5, QColor("#1F2433"))
-        gradient.setColorAt(1, QColor("#161922"))
+        gradient.setColorAt(0, QColor("#242424"))
+        gradient.setColorAt(0.5, QColor("#2d2d2d"))
+        gradient.setColorAt(1, QColor("#242424"))
         
         brush = QBrush(gradient)
         painter.setBrush(brush)
         painter.setPen(Qt.PenStyle.NoPen)
         
         # Icon placeholder
-        painter.drawRoundedRect(15, 15, 48, 48, 8, 8)
+        painter.drawRoundedRect(16, 18, 64, 64, 16, 16)
         
         # Name placeholder
-        painter.drawRoundedRect(75, 20, 150, 15, 4, 4)
+        painter.drawRoundedRect(96, 18, 200, 20, 4, 4)
         
-        # Version placeholder
-        painter.drawRoundedRect(75, 45, 80, 10, 3, 3)
+        # Meta placeholder
+        painter.drawRoundedRect(96, 46, 150, 12, 3, 3)
         
         # Description placeholder
-        painter.drawRoundedRect(15, 80, 270, 12, 4, 4)
-        painter.drawRoundedRect(15, 100, 200, 12, 4, 4)
+        painter.drawRoundedRect(96, 70, 400, 12, 4, 4)
         
-        # Button placeholder
-        painter.drawRoundedRect(200, 125, 85, 25, 12, 12)
-        
-        self.offset += 5
+        self.offset += 8
         if self.offset > self.width() + 100:
             self.offset = -100
-
-class PackageCard(QFrame):
-    def __init__(self, pkg, uninstall_callback, parent=None):
-        super().__init__(parent)
-        self.pkg = pkg
-        self.uninstall_callback = uninstall_callback
-        self.setObjectName("packageCard")
-        self.setFixedSize(320, 160)
-        
-        self._pos_anim = QPropertyAnimation(self, b"pos")
-        self._pos_anim.setDuration(200)
-        
-        self.init_ui()
-
-    def init_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(15, 15, 15, 15)
-        layout.setSpacing(10)
-        
-        # Header (Icon, Name, Version)
-        header = QHBoxLayout()
-        header.setSpacing(12)
-        
-        icon_label = QLabel()
-        icon_label.setFixedSize(48, 48)
-        
-        if self.pkg["icon"] and os.path.exists(self.pkg["icon"]):
-            pixmap = QPixmap(self.pkg["icon"]).scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-            icon_label.setPixmap(pixmap)
-        else:
-            # Generate colored avatar
-            first_letter = self.pkg["name"][0].upper()
-            avatar = QPixmap(48, 48)
-            avatar.fill(Qt.GlobalColor.transparent)
-            painter = QPainter(avatar)
-            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-            
-            # Use hash of name for deterministic color
-            color_idx = hash(self.pkg["name"]) % 360
-            color = QColor.fromHsv(color_idx, 150, 200)
-            
-            painter.setBrush(color)
-            painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawRoundedRect(0, 0, 48, 48, 12, 12)
-            
-            painter.setPen(Qt.GlobalColor.white)
-            font = painter.font()
-            font.setPointSize(18)
-            font.setBold(True)
-            painter.setFont(font)
-            painter.drawText(avatar.rect(), Qt.AlignmentFlag.AlignCenter, first_letter)
-            painter.end()
-            icon_label.setPixmap(avatar)
-            
-        header.addWidget(icon_label)
-        
-        info = QVBoxLayout()
-        info.setSpacing(2)
-        
-        name_label = QLabel(self.pkg["name"])
-        name_label.setObjectName("pkgName")
-        info.addWidget(name_label)
-        
-        ver_label = QLabel(self.pkg["version"])
-        ver_label.setObjectName("pkgVersion")
-        info.addWidget(ver_label)
-        
-        header.addLayout(info)
-        header.addStretch()
-        
-        # Type Badge
-        badge = QLabel(self.pkg["type"])
-        badge.setStyleSheet(f"""
-            background-color: {"#4F9EFF" if self.pkg["type"] == "APT" else "#3DD68C"};
-            color: #0D0F14;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 10px;
-            font-weight: bold;
-        """)
-        header.addWidget(badge, alignment=Qt.AlignmentFlag.AlignTop)
-        
-        layout.addLayout(header)
-        
-        # Description
-        desc = self.pkg["description"]
-        if len(desc) > 80: desc = desc[:77] + "..."
-        desc_label = QLabel(desc)
-        desc_label.setObjectName("pkgDesc")
-        desc_label.setWordWrap(True)
-        layout.addWidget(desc_label)
-        
-        # Footer (Meta, Action)
-        footer = QHBoxLayout()
-        
-        meta = QLabel(f"Added: {self.pkg['install_date']}")
-        meta.setObjectName("pkgMeta")
-        footer.addWidget(meta)
-        
-        footer.addStretch()
-        
-        self.btn = QPushButton("Uninstall")
-        self.btn.setObjectName("uninstallBtn")
-        self.btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn.clicked.connect(lambda: self.uninstall_callback(self.pkg))
-        footer.addWidget(self.btn)
-        
-        layout.addLayout(footer)
-
-    def enterEvent(self, event):
-        self._pos_anim.stop()
-        self._pos_anim.setEndValue(self.pos() + QPoint(0, -3))
-        self._pos_anim.start()
-        super().enterEvent(event)
-
-    def leaveEvent(self, event):
-        self._pos_anim.stop()
-        self._pos_anim.setEndValue(self.pos() + QPoint(0, 3))
-        self._pos_anim.start()
-        super().leaveEvent(event)
