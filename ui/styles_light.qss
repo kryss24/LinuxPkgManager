@@ -1,0 +1,168 @@
+/* Adwaita Light Inspired */
+* { 
+    font-family: "Inter", "Ubuntu", sans-serif; 
+    color: #333333; 
+}
+
+QMainWindow#mainWindow { 
+    background-color: #f6f5f4; 
+}
+
+QFrame#sidebar { 
+    background-color: #ebebeb; 
+    border-right: 1px solid #dcdcdc; 
+}
+
+QLabel#sidebarTitle {
+    font-size: 16px;
+    font-weight: 800;
+    color: #2e3436;
+}
+
+QLabel#sidebarHeader {
+    font-size: 11px;
+    font-weight: 700;
+    color: #888a85;
+}
+
+QPushButton#sidebarBtn { 
+    text-align: left; 
+    padding-left: 12px; 
+    border-radius: 6px; 
+    border: none; 
+    font-size: 13px; 
+    color: #555753; 
+    background-color: transparent; 
+    height: 40px;
+}
+
+QPushButton#sidebarBtn:hover { 
+    background-color: #dedede; 
+    color: #2e3436; 
+}
+
+QPushButton#sidebarBtn:checked { 
+    background-color: #3584e4; 
+    color: #ffffff; 
+    font-weight: 600; 
+}
+
+QWidget#topBar { 
+    background-color: #f6f5f4; 
+    min-height: 70px; 
+}
+
+QLineEdit#searchBar { 
+    background-color: #ffffff; 
+    border: 1px solid #dcdcdc; 
+    border-radius: 18px; 
+    padding: 0 15px; 
+    font-size: 13px; 
+    color: #333333; 
+}
+
+QLineEdit#searchBar:focus {
+    border: 2px solid #3584e4;
+}
+
+QScrollArea#mainScroll { 
+    background-color: #f6f5f4; 
+    border: none; 
+}
+
+QWidget#scrollContainer { 
+    background-color: #f6f5f4; 
+}
+
+/* Package Card */
+QFrame#packageCard { 
+    background-color: transparent; 
+    border-radius: 10px; 
+    border: 1px solid transparent; 
+}
+
+QFrame#packageCard[hover="true"] { 
+    background-color: #ffffff; 
+    border: 1px solid #dcdcdc; 
+}
+
+QLabel#pkgName { 
+    font-size: 16px; 
+    font-weight: 700; 
+    color: #2e3436;
+}
+
+QLabel#pkgMeta { 
+    font-size: 12px; 
+    color: #888a85; 
+}
+
+QLabel#pkgDesc { 
+    font-size: 13px; 
+    color: #555753; 
+}
+
+QPushButton#cardUninstallBtn { 
+    background-color: #ef4444; 
+    color: white; 
+    border-radius: 6px; 
+    font-size: 12px; 
+    font-weight: 700; 
+    height: 32px; 
+    border: none;
+}
+
+/* Maintenance Cards */
+QFrame#maintenanceCard { 
+    background-color: #ffffff; 
+    border: 1px solid #dcdcdc; 
+    border-radius: 12px; 
+}
+
+QLabel#cardTitle { 
+    font-size: 16px; 
+    font-weight: 700; 
+    color: #2e3436; 
+}
+
+QLabel#cardDesc { 
+    font-size: 13px; 
+    color: #888a85; 
+}
+
+QPushButton#actionBtn { 
+    background-color: #3584e4; 
+    color: white; 
+    border-radius: 6px; 
+    font-weight: 700; 
+    height: 36px; 
+    border: none;
+}
+
+QPushButton#dangerBtn { 
+    background-color: #ef4444; 
+    color: white; 
+    border-radius: 6px; 
+    font-weight: 700; 
+    height: 36px; 
+    border: none;
+}
+
+/* Controls */
+QComboBox { 
+    background-color: #ffffff; 
+    border: 1px solid #dcdcdc; 
+    border-radius: 6px; 
+    padding: 4px 12px; 
+    font-size: 13px; 
+    color: #333333;
+}
+
+QComboBox::drop-down { 
+    border: none; 
+}
+
+/* Toast System */
+QFrame#toastSuccess { background-color: #10b981; border-radius: 8px; }
+QFrame#toastError { background-color: #ef4444; border-radius: 8px; }
+QLabel#toastMessage { color: #ffffff; font-weight: 600; font-size: 13px; }

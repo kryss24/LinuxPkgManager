@@ -1,204 +1,24 @@
-/* Adwaita-inspired Dark Design System */
-
-* {
-    font-family: "Inter", "Ubuntu", "Segoe UI", sans-serif;
-    color: #ffffff;
-}
-
-QMainWindow#mainWindow {
-    background-color: #1e1e1e;
-}
-
-/* Sidebar Styling */
-QFrame#sidebar {
-    background-color: #1e1e1e;
-    border-right: 1px solid #333333;
-}
-
-QLabel#sidebarTitle {
-    font-size: 16px;
-    font-weight: 800;
-    color: #ffffff;
-}
-
-QLabel#sidebarHeader {
-    font-size: 11px;
-    font-weight: 700;
-    color: #666666;
-    letter-spacing: 0.8px;
-}
-
-QPushButton#sidebarBtn {
-    text-align: left;
-    padding-left: 12px;
-    border-radius: 6px;
-    border: none;
-    font-size: 13px;
-    font-weight: 500;
-    color: #cccccc;
-    background-color: transparent;
-}
-
-QPushButton#sidebarBtn:hover {
-    background-color: #2d2d2d;
-    color: #ffffff;
-}
-
-QPushButton#sidebarBtn:checked {
-    background-color: #3584e4;
-    color: #ffffff;
-    font-weight: 600;
-}
-
-QFrame#sidebarSeparator {
-    color: #333333;
-    max-height: 1px;
-    margin: 10px 0;
-}
-
-/* Header & SearchBar */
-QWidget#topBar {
-    background-color: #1e1e1e;
-    min-height: 70px;
-    max-height: 70px;
-}
-
-QLineEdit#searchBar {
-    background-color: #2d2d2d;
-    border: 1px solid #3d3d3d;
-    border-radius: 18px;
-    padding: 0 15px;
-    font-size: 13px;
-    color: #ffffff;
-}
-
-QLineEdit#searchBar:focus {
-    border: 2px solid #3584e4;
-    background-color: #242424;
-}
-
-QLabel#appTitle {
-    font-size: 20px;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-QLabel#packageCounter {
-    font-size: 13px;
-    color: #a0a0a0;
-    font-weight: 500;
-}
-
-/* Scroll Area & Main Content */
-QScrollArea#mainScroll {
-    background-color: #1e1e1e;
-    border: none;
-}
-
-QWidget#scrollContainer {
-    background-color: #1e1e1e;
-}
-
-/* Package Card List Styling */
-QFrame#packageCard {
-    background-color: transparent;
-    border-radius: 10px;
-    border: 1px solid transparent;
-}
-
-QFrame#packageCard[hover="true"] {
-    background-color: #2d2d2d;
-    border: 1px solid #3d3d3d;
-}
-
-QLabel#pkgName {
-    font-size: 16px;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-QLabel#pkgMeta {
-    font-size: 12px;
-    color: #a0a0a0;
-}
-
-QLabel#pkgDesc {
-    font-size: 13px;
-    color: #cccccc;
-    line-height: 1.4;
-}
-
-QPushButton#cardUninstallBtn {
-    background-color: #ef4444;
-    color: white;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    border: none;
-}
-
-QPushButton#cardUninstallBtn:hover {
-    background-color: #dc2626;
-}
-
-/* Dialogs */
-QPushButton#dialogCancelBtn {
-    background-color: #3d3d3d;
-    color: #ffffff;
-    border-radius: 6px;
-    padding: 0 16px;
-    font-weight: 600;
-}
-
-QPushButton#dialogCancelBtn:hover {
-    background-color: #4a4a4a;
-}
-
-QPushButton#dialogDangerBtn {
-    background-color: #ef4444;
-    color: #ffffff;
-    border-radius: 6px;
-    padding: 0 16px;
-    font-weight: 700;
-}
-
-/* Toast System */
-QFrame#toastSuccess {
-    background-color: #10b981;
-    border-radius: 8px;
-    border: 1px solid #34d399;
-}
-
-QFrame#toastError {
-    background-color: #ef4444;
-    border-radius: 8px;
-    border: 1px solid #f87171;
-}
-
-QLabel#toastMessage {
-    color: #ffffff;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-/* ScrollBar Styling */
-QScrollBar:vertical {
-    border: none;
-    background: transparent;
-    width: 10px;
-    margin: 0px 0px 0px 0px;
-}
-
-QScrollBar::handle:vertical {
-    background: #3d3d3d;
-    min-height: 20px;
-    border-radius: 5px;
-}
-
-QScrollBar::handle:vertical:hover {
-    background: #4a4a4a;
-}
-
-QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-    height: 0px;
-}
+/* Adwaita Dark Inspired */
+* { font-family: "Inter", "Ubuntu", sans-serif; color: #ffffff; }
+QMainWindow#mainWindow { background-color: #1e1e1e; }
+QFrame#sidebar { background-color: #1e1e1e; border-right: 1px solid #333333; }
+QPushButton#sidebarBtn { text-align: left; padding-left: 12px; border-radius: 6px; border: none; font-size: 13px; color: #cccccc; background-color: transparent; height: 40px; }
+QPushButton#sidebarBtn:hover { background-color: #2d2d2d; color: #ffffff; }
+QPushButton#sidebarBtn:checked { background-color: #3584e4; color: #ffffff; font-weight: 600; }
+QWidget#topBar { background-color: #1e1e1e; min-height: 70px; }
+QLineEdit#searchBar { background-color: #2d2d2d; border: 1px solid #3d3d3d; border-radius: 18px; padding: 0 15px; font-size: 13px; color: #ffffff; }
+QScrollArea#mainScroll { background-color: #1e1e1e; border: none; }
+QWidget#scrollContainer { background-color: #1e1e1e; }
+QFrame#packageCard { background-color: transparent; border-radius: 10px; border: 1px solid transparent; }
+QFrame#packageCard[hover="true"] { background-color: #2d2d2d; border: 1px solid #3d3d3d; }
+QLabel#pkgName { font-size: 16px; font-weight: 700; }
+QLabel#pkgMeta { font-size: 12px; color: #a0a0a0; }
+QLabel#pkgDesc { font-size: 13px; color: #cccccc; }
+QPushButton#cardUninstallBtn { background-color: #ef4444; color: white; border-radius: 6px; font-size: 12px; font-weight: 700; height: 32px; }
+QFrame#maintenanceCard { background-color: #2d2d2d; border: 1px solid #3d3d3d; border-radius: 12px; }
+QLabel#cardTitle { font-size: 16px; font-weight: 700; color: #ffffff; }
+QLabel#cardDesc { font-size: 13px; color: #a0a0a0; }
+QPushButton#actionBtn { background-color: #3584e4; color: white; border-radius: 6px; font-weight: 700; height: 36px; }
+QPushButton#dangerBtn { background-color: #ef4444; color: white; border-radius: 6px; font-weight: 700; height: 36px; }
+QComboBox { background-color: #2d2d2d; border: 1px solid #3d3d3d; border-radius: 6px; padding: 4px 12px; font-size: 13px; }
+QComboBox::drop-down { border: none; }

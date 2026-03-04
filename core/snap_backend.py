@@ -11,29 +11,23 @@ class SnapBackend:
     def get_snaps():
         snaps = []
         try:
-            # Exclude core/system snaps
-            exclude = {"core", "core18", "core20", "core22", "snapd", "bare", "gtk-common-themes", "gnome-3-28-1804", "gnome-3-34-1804", "gnome-3-38-2004", "gnome-42-2204", "wine-platform-6-stable", "wine-platform-runtime"}
-            
+            exclude = {"core", "core18", "core20", "core22", "snapd", "bare", "gtk-common-themes"}
             res = subprocess.check_output(["snap", "list"], text=True)
-            lines = res.splitlines()[1:] # skip header
+            lines = res.splitlines()[1:]
             for line in lines:
                 parts = line.split()
                 if len(parts) >= 6:
-                    name, version, rev, tracking, pub, notes = parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]
-                    # Exclude gnome-*
-                    if name in exclude or name.startswith("gnome-"):
-                        continue
-                        
+                    name, version = parts[0], parts[1]
+                    if name in exclude or name.startswith("gnome-"): continue
                     snaps.append({
                         "name": name,
                         "version": version,
-                        "description": f"Snap from {pub}",
-                        "icon": SnapBackend.find_icon(name),
                         "type": "Snap",
-                        "install_date": "Installed via Snap" # Snap list doesn't easily show date in summary
+                        "description": f"Snap from {parts[4]}",
+                        "icon": SnapBackend.find_icon(name),
+                        "install_date": "Installed via Snap"
                     })
-        except Exception as e:
-            print(f"Snap fetch error: {e}")
+        except: pass
         return snaps
 
     @staticmethod
@@ -42,13 +36,71 @@ class SnapBackend:
         icon_path = f"/var/lib/snapd/desktop/icons/{name}_icon.png"
         if os.path.exists(icon_path):
             return icon_path
-        
         # Or look in standard locations if it's a popular app
         for ext in ["png", "svg"]:
             path = f"/usr/share/pixmaps/{name}.{ext}"
             if os.path.exists(path): return path
-            
         return None
+
+    @staticmethod
+    def get_upgradable():
+        upgradable = []
+        try:
+            res = subprocess.check_output(["snap", "refresh", "--list"], text=True)
+            lines = res.splitlines()[1:]
+            for line in lines:
+                parts = line.split()
+                if len(parts) >= 4:
+                    upgradable.append({
+                        "name": parts[0],
+                        "version": parts[2], # new version
+                        "type": "Snap",
+                        "description": f"Update available: {parts[1]} -> {parts[2]}"
+                    })
+        except: pass
+        return upgradable
+
+    @staticmethod
+    def search_snaps(query):
+        results = []
+        if not query or len(query) < 2: return results
+        try:
+            res = subprocess.check_output(["snap", "find", query], text=True)
+            lines = res.splitlines()[1:]
+            for line in lines[:50]:
+                parts = line.split()
+                if len(parts) >= 3:
+                    results.append({
+                        "name": parts[0],
+                        "version": parts[1],
+                        "description": parts[2],
+                        "type": "Snap",
+                        "install_date": f"Available from {parts[2]}"
+                    })
+        except: pass
+        return results
+
+    @staticmethod
+    def get_history():
+        history = []
+        try:
+            res = subprocess.check_output(["snap", "changes"], text=True)
+            lines = res.splitlines()[1:]
+            for line in lines:
+                parts = line.split()
+                if len(parts) >= 4:
+                    date = f"{parts[2]} {parts[3]}"
+                    summary = " ".join(parts[4:])
+                    history.append({
+                        "date": date,
+                        "action": "Snap Change",
+                        "package": summary,
+                        "version": "-",
+                        "type": "Snap"
+                    })
+            history.reverse()
+        except: pass
+        return history
 
 class SnapWorker(QThread):
     finished = pyqtSignal(list)
